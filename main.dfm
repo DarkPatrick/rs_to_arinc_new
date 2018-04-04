@@ -74,7 +74,7 @@ object Form1: TForm1
       ColCount = 2
       FixedColor = clGradientActiveCaption
       FixedCols = 0
-      RowCount = 13
+      RowCount = 12
       Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goDrawFocusSelected]
       ScrollBars = ssNone
       TabOrder = 1
@@ -84,7 +84,6 @@ object Form1: TForm1
         64
         64)
       RowHeights = (
-        24
         24
         24
         24
@@ -311,7 +310,7 @@ object Form1: TForm1
       ColCount = 2
       FixedColor = clGradientActiveCaption
       FixedCols = 0
-      RowCount = 13
+      RowCount = 12
       Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing]
       ScrollBars = ssNone
       TabOrder = 1
@@ -321,7 +320,6 @@ object Form1: TForm1
         64
         64)
       RowHeights = (
-        24
         24
         24
         24

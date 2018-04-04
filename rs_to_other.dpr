@@ -11,7 +11,8 @@ uses
   set_ports in 'set_ports.pas' {Form4},
   arinc_receive in 'arinc_receive.pas' {arinc_rec},
   dev_info in 'dev_info.pas' {info_form},
-  string_numbers in 'string_numbers.pas';
+  string_numbers in 'string_numbers.pas',
+  crc in 'crc.pas';
 
 {$R *.res}
 
@@ -19,11 +20,11 @@ begin
   application.initialize;
   application.mainFormOnTaskbar := TRUE;
   //Application.HelpFile := '\help.chm';
-  application.createForm(TForm1, form1);
-  application.createForm(TForm2, form2);
-  application.createForm(TForm3, form3);
-  application.createForm(TForm4, form4);
-  application.createForm(Tarinc_rec, arinc_rec);
-  application.createForm(Tinfo_form, info_form);
+  Application.CreateForm(Tform1, form1);
+  Application.CreateForm(Tform2, form2);
+  Application.CreateForm(Tform3, form3);
+  Application.CreateForm(Tform4, form4);
+  Application.CreateForm(Tarinc_rec, arinc_rec);
+  Application.CreateForm(Tinfo_form, info_form);
   application.run;
 end.

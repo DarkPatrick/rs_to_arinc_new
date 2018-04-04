@@ -9,7 +9,7 @@ uses
   System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, StdCtrls,
   ExtCtrls, CPort, CPortCtl, Vcl.Grids, convertation, Vcl.MPlayer,
   System.Win.Registry, detect_ports, processing_protoсol, set_ports,
-  arinc_receive, dev_info, string_numbers;
+  arinc_receive, dev_info, string_numbers, crc;
 
 
 
@@ -111,6 +111,7 @@ type
 
 const
   START_BYTE  = '55';
+  START_BYTES: array[0 .. 3] of String = ('76', '70', 'D4', '48');
   PACKAGE_LEN = 64;
 var
   form1: TForm1;
@@ -126,6 +127,7 @@ var
   able_to_change_port, no_programming: boolean;
   last_ms: word;
   tim3_cnt: integer;
+  left_for_success: Integer;
 
 
 
@@ -328,11 +330,12 @@ begin
     exit(FALSE);
   end;
   str1 := chars_to_hex(data_str);
-  if (str1[1] + str1[2] <> START_BYTE) then
+  if ((str1[1] + str1[2] <> START_BYTES[3]) or (str1[3] + str1[4] <> START_BYTES[2])
+    or (str1[5] + str1[6] <> START_BYTES[1]) or (str1[7] + str1[8] <> START_BYTES[0])) then
   begin
     form1.received_data.cells[2, i] :=
-      'ERROR: start byte "' + str1[1] + str1[2]
-        + '" doesn''t match the protocol (' + START_BYTE + ')';
+      'ERROR: start bytes "' + str1[1] + str1[2] + str1[3] + str1[4] + str1[5] + str1[6] + str1[7] + str1[8]
+        + '" don''t match the protocol (' + START_BYTES[3] + START_BYTES[2] + START_BYTES[1] + START_BYTES[0] + ')';
     clear_data_cmd_pack(grid);
     rcv_error := TRUE;
     exit(FALSE);
@@ -365,15 +368,15 @@ begin
       if (grid = 0) then
       begin
         temp_grid := rcv_dat_info;
-        rcv_serv_cmd.Text := str1[3] + str1[4] + str1[5] + str1[6];
+        rcv_serv_cmd.Text := str1[9] + str1[10] + str1[11] + str1[12];
       end else begin
         temp_grid := trm_dat_info;
-        trm_serv_cmd.Text := str1[3] + str1[4] + str1[5] + str1[6];
+        trm_serv_cmd.Text := str1[9] + str1[10] + str1[11] + str1[12];
       end;
       with temp_grid do
       begin
-        str_pos := 7;
-        for i := 1 to 12 do
+        str_pos := 17;
+        for i := 1 to 11 do
         begin
           cells[0, i] := str1[str_pos] + str1[str_pos + 1];
           if (cells[0, i] = '0F') then
@@ -382,7 +385,7 @@ begin
           end;
           str_pos := str_pos + 2;
         end;
-        for i := 1 to 12 do
+        for i := 1 to 11 do
         begin
           cells[1, i] := '';
           for j := 0 to 7 do
@@ -595,10 +598,12 @@ function prepareFirstPackPart(): string;
 var
   str1: string;
 begin
-  str1 := START_BYTE;
+  str1 := START_BYTES[3] + START_BYTES[2] + START_BYTES[1] + START_BYTES[0];
   form1.trm_serv_cmd.text := intToHex((sended_data_num + 1) mod 256, 2)
     + intToHex(received_data_num mod 256, 2);
   str1 := str1 + form1.trm_serv_cmd.text;
+  // два резервных байта
+  str1 := str1 + '0000';
   result := str1;
 end;
 
@@ -820,8 +825,7 @@ begin
   begin
     for i := 1 to count do
     begin
-      if ((received_string <> '')
-        or (ord(str1[i]) = hex_to_int(START_BYTE))) then
+      if ((received_string <> '') or (left_for_success = 0)) then
       begin
         received_string := received_string + str1[i];
         received_chars_num := received_chars_num + 1;
@@ -834,6 +838,14 @@ begin
           received_chars_num := 0;
           received_string := '';
         end;
+      end;
+      if ((left_for_success > 0) and (ord(str1[i]) = hex_to_int(START_BYTES[left_for_success - 1]))) then
+      begin
+        dec(left_for_success);
+      end
+      else
+      begin
+        left_for_success := sizeof(START_BYTES);
       end;
     end;
   end;
@@ -875,6 +887,7 @@ begin
   cnctd := 0;
   able_to_change_port := TRUE;
   no_programming := FALSE;
+  left_for_success := sizeof(START_BYTES);
 end;
 
 procedure TForm1.get_arinc_btnClick(sender: TObject);
@@ -1051,7 +1064,7 @@ begin
       str1 := str1 + cells[1, i];
     end;
   end;
-  str1 := str1 + '00';
+  str1 := str1 + IntToHex(crcCheckSum(str1), 2);
   str1 := hex_to_chars(str1);
   sendCommand(str1);
   displaySendedData(str1);
@@ -1286,15 +1299,15 @@ begin
         end;
         str1 := prepareFirstPackPart();
         ub := data_s_grid.rowCount - 1;
-        if (ub > 12) then
+        if (ub > 11) then
         begin
-          ub := 12;
+          ub := 11;
         end;
         for i := 1 to ub do
         begin
           str1 := str1 + intToHex(global_chnl, 2);
         end;
-        for i := ub + 1 to 12 do
+        for i := ub + 1 to 11 do
         begin
           str1 := str1 + intToHex(0, 2);
         end;
@@ -1321,23 +1334,23 @@ begin
             str2 := '0' + str2;
           end;
           str1 := str1 + str2;
-          if ((i mod 12 = 0) and (i < data_s_grid.rowCount - 1)) then
+          if ((i mod 11 = 0) and (i < data_s_grid.rowCount - 1)) then
           begin
-            str1 := str1 + '00';
+            str1 := str1 + IntToHex(crcCheckSum(str1), 2);
             str1 := hex_to_chars(str1);
             sendCommand(str1);
             displaySendedData(str1);
             str1 := prepareFirstPackPart();
             ub := data_s_grid.rowCount - 1 - i;
-            if (ub > 12) then
+            if (ub > 11) then
             begin
-              ub := 12;
+              ub := 11;
             end;
             for j := 1 to ub do
             begin
               str1 := str1 + intToHex(global_chnl, 2);
             end;
-            for j := ub + 1 to 12 do
+            for j := ub + 1 to 11 do
             begin
               str1 := str1 + intToHex(0, 2);
             end;
@@ -1347,7 +1360,7 @@ begin
         begin
           str1 := str1 + '0';
         end;
-        str1 := str1 + '00';
+        str1 := str1 + IntToHex(crcCheckSum(str1), 2);
         str1 := hex_to_chars(str1);
         sendCommand(str1);
         displaySendedData(str1);

@@ -470,7 +470,7 @@ begin
   with arinc_rec do
   begin
     str_num := StringNumber.create('0', 16);
-    for i := 1 to 12 do
+    for i := 1 to 11 do
     begin
       for j := 1 to data_grid.rowCount - 1 do
       begin
@@ -479,20 +479,20 @@ begin
         begin
           gl_cnt := '0' + gl_cnt;
         end;
-        if (str1[5 + i * 2] + str1[6 + i * 2] = gl_cnt) then
+        if (str1[15 + i * 2] + str1[16 + i * 2] = gl_cnt) then
         begin
-          str_num.setNewVal(str1[37 + (i - 1) * 8] + str1[38 + (i - 1) * 8]);
+          str_num.setNewVal(str1[45 + (i - 1) * 8] + str1[46 + (i - 1) * 8]);
           if (' ' + str_num.getInBase(8, 2) = data_grid.cells[0, j]) then
           begin
             time_passed[j] := 0;
             one_found := TRUE;
-            str2 := hex_to_bin(str1[31 + (i - 1) * 8]);
+            str2 := hex_to_bin(str1[39 + (i - 1) * 8]);
             data_grid.cells[1, j] := str2[2] + str2[3];
             data_grid.cells[2, j] := '';
             for k := 1 to 5 do
             begin
               data_grid.cells[2, j] := data_grid.cells[2, j]
-                + str1[31 + (i - 1) * 8 + k];
+                + str1[39 + (i - 1) * 8 + k];
             end;
             data_grid.cells[2, j] := str2[4] + data_grid.cells[2, j];
             break;

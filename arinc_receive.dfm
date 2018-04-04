@@ -86,6 +86,13 @@ object arinc_rec: Tarinc_rec
     ParentFont = False
     TabOrder = 2
     OnDrawCell = data_gridDrawCell
+    ColWidths = (
+      120
+      120
+      120)
+    RowHeights = (
+      24
+      24)
   end
   object apply_btn: TButton
     Left = 423
@@ -108,6 +115,13 @@ object arinc_rec: Tarinc_rec
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing, goTabs, goThumbTracking]
     TabOrder = 4
     OnKeyPress = data_s_gridKeyPress
+    ColWidths = (
+      120
+      120
+      120)
+    RowHeights = (
+      24
+      24)
   end
   object arinc_send_addr: TLabeledEdit
     Left = 520
