@@ -32,6 +32,9 @@ object Form2: TForm2
       75
       143
       103)
+    RowHeights = (
+      24
+      24)
   end
   object add_filter_btn: TButton
     Left = 0
@@ -57,6 +60,9 @@ object Form2: TForm2
     ColWidths = (
       258
       245)
+    RowHeights = (
+      24
+      24)
   end
   object del_filter_btn: TButton
     Left = 367
@@ -79,5 +85,9 @@ object Form2: TForm2
     ScrollBars = ssNone
     TabOrder = 4
     Visible = False
+    ColWidths = (
+      64)
+    RowHeights = (
+      24)
   end
 end

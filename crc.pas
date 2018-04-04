@@ -5,7 +5,7 @@ interface
 uses
     convertation;
 
-function crcCheckSum(data: String) : Byte;
+function crcCheckSum(data: String; len: Integer = 0): Byte;
 
 implementation
 
@@ -29,13 +29,17 @@ const
       $96, $91, $98, $9F, $8A, $8D, $84, $83, $DE, $D9, $D0, $D7, $C2, $C5, $CC,
       $CB, $E6, $E1, $E8, $EF, $FA, $FD, $F4, $F3);
 
-function crcCheckSum(data: String) : Byte;
+function crcCheckSum(data: String; len: Integer = 0): Byte;
 var
     i: Integer;
     crc_val: Byte;
 begin
     crc_val := 0;
-    for i := 1 to length(data) do
+    if (len = 0) then
+    begin
+        len := length(data);
+    end;
+    for i := 1 to len do
     begin
         crc_val := crc_table[crc_val] xor hex_to_int(data[i]);
     end;
