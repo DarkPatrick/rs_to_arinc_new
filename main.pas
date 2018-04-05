@@ -512,7 +512,7 @@ begin
             chose_ports.enabled := FALSE;
             com_close_btn.enabled := TRUE;
             send_pack_btn.enabled := TRUE;
-            speed_select.enabled := FALSE;
+            //speed_select.enabled := FALSE;
             send_arinc_set_btn.enabled := TRUE;
         end
         else
@@ -521,7 +521,7 @@ begin
             chose_ports.enabled := TRUE;
             com_close_btn.enabled := FALSE;
             send_pack_btn.enabled := FALSE;
-            speed_select.enabled := TRUE;
+            //speed_select.enabled := TRUE;
             send_arinc_set_btn.enabled := FALSE;
         end;
     end;

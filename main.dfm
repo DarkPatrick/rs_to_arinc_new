@@ -167,7 +167,8 @@ object Form1: TForm1
         Width = 100
         Height = 80
         Caption = #1042#1099#1073#1086#1088' '#1089#1082#1086#1088#1086#1089#1090#1080
-        ItemIndex = 0
+        Enabled = False
+        ItemIndex = 1
         Items.Strings = (
           '115200'
           '921600')
