@@ -100,6 +100,7 @@ type
           Shift: TShiftState);
         procedure trm_serv_cmdKeyDown(sender: TObject; var key: Word;
           Shift: TShiftState);
+    procedure FormShow(Sender: TObject);
     private
         { Private declarations }
     public
@@ -916,6 +917,18 @@ end;
 
 procedure TForm1.formCreate(sender: TObject);
 begin
+    visible := FALSE;
+    checkForConnection();
+    first_time := 1;
+    simplePreparation();
+    cnctd := 0;
+    able_to_change_port := TRUE;
+    no_programming := FALSE;
+    left_for_success := length(START_BYTES);
+end;
+
+procedure TForm1.FormShow(Sender: TObject);
+begin
     try
         if FileExists('updater.exe') then
         begin
@@ -925,14 +938,6 @@ begin
         end;
     finally
     end;
-    visible := FALSE;
-    checkForConnection();
-    first_time := 1;
-    simplePreparation();
-    cnctd := 0;
-    able_to_change_port := TRUE;
-    no_programming := FALSE;
-    left_for_success := length(START_BYTES);
 end;
 
 procedure TForm1.get_arinc_btnClick(sender: TObject);

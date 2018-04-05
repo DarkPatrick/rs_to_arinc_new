@@ -18,6 +18,7 @@ object Form1: TForm1
   Position = poDesigned
   OnClose = FormClose
   OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object receive_data_block: TPanel
