@@ -1,7 +1,7 @@
 object Form1: TForm1
   Left = 0
   Top = 0
-  Caption = 'Transmitter (v4.5)'
+  Caption = 'Transmitter (v5.0)'
   ClientHeight = 588
   ClientWidth = 792
   Color = clBtnFace

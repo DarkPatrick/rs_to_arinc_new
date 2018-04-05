@@ -387,6 +387,7 @@ begin
             else
             begin
                 temp_grid := trm_dat_info;
+                //received_data_num := hex_to_int(str1[9] + str1[10]);
                 trm_serv_cmd.Text := str1[9] + str1[10] + str1[11] + str1[12];
             end;
             with temp_grid do
@@ -621,7 +622,7 @@ var
 begin
     str1 := START_BYTES[3] + START_BYTES[2] + START_BYTES[1] + START_BYTES[0];
     form1.trm_serv_cmd.Text := intToHex((sended_data_num + 1) mod 256, 2) +
-      intToHex(received_data_num mod 256, 2);
+      form1.rcv_serv_cmd.text[1] + form1.rcv_serv_cmd.text[2];//intToHex(received_data_num mod 256, 2);
     str1 := str1 + form1.trm_serv_cmd.Text;
     // два резервных байта
     str1 := str1 + '0000';
