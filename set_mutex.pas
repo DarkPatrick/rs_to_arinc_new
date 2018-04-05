@@ -51,7 +51,7 @@ begin
         mutex := createMutex(nil, FALSE, mutex_name);
         if (mutex = 0) then
         begin
-            messageBox(0, 'Невозможно создать мьютекс', 'Ошибка',
+            messageBox(0, 'РќРµРІРѕР·РјРѕР¶РЅРѕ СЃРѕР·РґР°С‚СЊ РјСЊСЋС‚РµРєСЃ', 'РћС€РёР±РєР°',
               MB_OK or MB_ICONSTOP);
             good := FALSE;
             halt;

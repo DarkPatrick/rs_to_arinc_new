@@ -1,4 +1,4 @@
-unit processing_protoсol;
+unit processing_protoСЃol;
 
 interface
 
@@ -316,14 +316,14 @@ procedure TForm2.FormCreate(sender: TObject);
 begin
     writed_packs := 0;
 
-    arinc_protocol.cells[0, 0] := 'Номер канала';
-    arinc_protocol.cells[1, 0] := 'Идентификатор';
-    arinc_protocol.cells[2, 0] := 'Источник';
-    arinc_protocol.cells[3, 0] := 'Данные';
-    arinc_protocol.cells[4, 0] := 'Матрица признака';
+    arinc_protocol.cells[0, 0] := 'РќРѕРјРµСЂ РєР°РЅР°Р»Р°';
+    arinc_protocol.cells[1, 0] := 'РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ';
+    arinc_protocol.cells[2, 0] := 'РСЃС‚РѕС‡РЅРёРє';
+    arinc_protocol.cells[3, 0] := 'Р”Р°РЅРЅС‹Рµ';
+    arinc_protocol.cells[4, 0] := 'РњР°С‚СЂРёС†Р° РїСЂРёР·РЅР°РєР°';
 
-    filter_param.cells[0, 0] := 'Название столбца';
-    filter_param.cells[1, 0] := 'Фильтр';
+    filter_param.cells[0, 0] := 'РќР°Р·РІР°РЅРёРµ СЃС‚РѕР»Р±С†Р°';
+    filter_param.cells[1, 0] := 'Р¤РёР»СЊС‚СЂ';
 end;
 
 end.

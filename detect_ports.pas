@@ -15,7 +15,7 @@ var
 begin
     if (start_pos < 1) then
     begin
-        raise ERangeError.create('aStartPos äîëæåí áûòü áîëüøå 0');
+        raise ERangeError.create('aStartPos Ð´Ð¾Ð»Ð¶ÐµÐ½ Ð±Ñ‹Ñ‚ÑŒ Ð±Ð¾Ð»ÑŒÑˆÐµ 0');
     end;
 
     if (start_pos > length(buf)) then

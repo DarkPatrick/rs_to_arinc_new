@@ -8,7 +8,7 @@ uses
     System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
     StdCtrls,
     ExtCtrls, CPort, CPortCtl, Vcl.Grids, convertation, Vcl.MPlayer,
-    System.Win.Registry, detect_ports, processing_protoсol, set_ports,
+    System.Win.Registry, detect_ports, processing_protoСЃol, set_ports,
     arinc_receive, dev_info, string_numbers, crc;
 
 type
@@ -108,7 +108,7 @@ type
 
 const
     START_BYTE = '55';
-    START_BYTES: array [0 .. 3] of String = ('76', '70', 'D4', '48');
+    START_BYTES: array [0 .. 3] of String = ('76', '70', 'D4', '8B');
     PACKAGE_LEN = 64;
 
 var
@@ -245,9 +245,9 @@ begin
     begin
         with received_data do
         begin
-            cells[0, 0] := 'Номер пакета';
-            cells[1, 0] := 'Время приёма';
-            cells[2, 0] := 'Комментарий';
+            cells[0, 0] := 'РќРѕРјРµСЂ РїР°РєРµС‚Р°';
+            cells[1, 0] := 'Р’СЂРµРјСЏ РїСЂРёС‘РјР°';
+            cells[2, 0] := 'РљРѕРјРјРµРЅС‚Р°СЂРёР№';
             colWidths[0] := 80;
             colWidths[1] := 80;
             colWidths[2] := 185;
@@ -255,9 +255,9 @@ begin
 
         with sended_data do
         begin
-            cells[0, 0] := 'Номер пакета';
-            cells[1, 0] := 'Время передачи';
-            cells[2, 0] := 'Комментарий';
+            cells[0, 0] := 'РќРѕРјРµСЂ РїР°РєРµС‚Р°';
+            cells[1, 0] := 'Р’СЂРµРјСЏ РїРµСЂРµРґР°С‡Рё';
+            cells[2, 0] := 'РљРѕРјРјРµРЅС‚Р°СЂРёР№';
             colWidths[0] := 80;
             colWidths[1] := 90;
             colWidths[2] := 175;
@@ -265,16 +265,16 @@ begin
 
         with rcv_dat_info do
         begin
-            cells[0, 0] := 'Команда';
-            cells[1, 0] := 'Данные';
+            cells[0, 0] := 'РљРѕРјР°РЅРґР°';
+            cells[1, 0] := 'Р”Р°РЅРЅС‹Рµ';
             colWidths[0] := 55;
             colWidths[1] := 75;
         end;
 
         with trm_dat_info do
         begin
-            cells[0, 0] := 'Команда';
-            cells[1, 0] := 'Данные';
+            cells[0, 0] := 'РљРѕРјР°РЅРґР°';
+            cells[1, 0] := 'Р”Р°РЅРЅС‹Рµ';
             colWidths[0] := 55;
             colWidths[1] := 75;
         end;
@@ -531,14 +531,14 @@ begin
             port_num1.clear;
             if (cancel_main = TRUE) then
             begin
-                port_num1.Text := '№ порта';
+                port_num1.Text := 'в„– РїРѕСЂС‚Р°';
                 port_num1.itemIndex := -1;
             end;
             tp2idx := port_num2.itemIndex;
             port_num2.clear;
             if (cancel_extra = TRUE) then
             begin
-                port_num2.Text := '№ порта';
+                port_num2.Text := 'в„– РїРѕСЂС‚Р°';
                 port_num2.itemIndex := -1;
                 set_control.checked := FALSE;
             end;
@@ -584,12 +584,12 @@ begin
             end;
             if (find1 = FALSE) then
             begin
-                port_num1.Text := '№ порта';
+                port_num1.Text := 'в„– РїРѕСЂС‚Р°';
                 port_num1.itemIndex := -1;
             end;
             if (find2 = FALSE) then
             begin
-                port_num2.Text := '№ порта';
+                port_num2.Text := 'в„– РїРѕСЂС‚Р°';
                 port_num2.itemIndex := -1;
                 set_control.checked := FALSE;
             end;
@@ -614,7 +614,7 @@ begin
     form1.trm_serv_cmd.Text := intToHex((sended_data_num + 1) mod 256, 2) +
       intToHex(received_data_num mod 256, 2);
     str1 := str1 + form1.trm_serv_cmd.Text;
-    // два резервных байта
+    // РґРІР° СЂРµР·РµСЂРІРЅС‹С… Р±Р°Р№С‚Р°
     str1 := str1 + '0000';
     result := str1;
 end;
@@ -779,7 +779,7 @@ begin
                 if (port_num2.itemIndex = -1) then
                 begin
                     showMessage
-                      ('ошибка: порт не настроен. измени конфигурацию');
+                      ('РѕС€РёР±РєР°: РїРѕСЂС‚ РЅРµ РЅР°СЃС‚СЂРѕРµРЅ. РёР·РјРµРЅРё РєРѕРЅС„РёРіСѓСЂР°С†РёСЋ');
                     abort();
                 end
                 else
@@ -802,7 +802,7 @@ begin
               strToBaudRate(speed_select.Items.strings[speed_select.itemIndex]);
             if (port_num1.itemIndex = -1) then
             begin
-                showMessage('ошибка: порт не настроен. измени конфигурацию');
+                showMessage('РѕС€РёР±РєР°: РїРѕСЂС‚ РЅРµ РЅР°СЃС‚СЂРѕРµРЅ. РёР·РјРµРЅРё РєРѕРЅС„РёРіСѓСЂР°С†РёСЋ');
                 abort();
             end
             else
@@ -826,7 +826,7 @@ procedure TForm1.com_portException(sender: TObject;
   TComException: TComExceptions; comportMessage: string; winError: Int64;
   winMessage: string);
 begin
-    showMessage('Закрытие порта после аварийного завершения...');
+    showMessage('Р—Р°РєСЂС‹С‚РёРµ РїРѕСЂС‚Р° РїРѕСЃР»Рµ Р°РІР°СЂРёР№РЅРѕРіРѕ Р·Р°РІРµСЂС€РµРЅРёСЏ...');
     abort();
 end;
 
@@ -846,9 +846,9 @@ begin
                 received_chars_num := received_chars_num + 1;
                 if (received_chars_num = PACKAGE_LEN) then
                 begin
-                    if (crcCheckSum(received_string, PACKAGE_LEN - 1) <> hex_to_int(str1[i])) then
+                    if (crcCheckSum(received_string, PACKAGE_LEN - 1) <> hex_to_int(str1[i - 1] + str1[i])) then
                     begin
-                        showMessage('CRC не совпало');
+                        showMessage('CRC РЅРµ СЃРѕРІРїР°Р»Рѕ');
                     end;
                     receiveStringCmd(received_string);
                     displayReceivedData(received_string);
@@ -1275,8 +1275,8 @@ begin
         if (cnctd = 1) then
         begin
             cnctd := -1;
-            showMessage('Соединение с портом ' + com_port.port +
-              ' было разорвано.');
+            showMessage('РЎРѕРµРґРёРЅРµРЅРёРµ СЃ РїРѕСЂС‚РѕРј ' + com_port.port +
+              ' Р±С‹Р»Рѕ СЂР°Р·РѕСЂРІР°РЅРѕ.');
             com_open_btn.enabled := FALSE;
             chose_ports.enabled := FALSE;
             com_close_btn.enabled := FALSE;
@@ -1289,8 +1289,8 @@ begin
         if (cnctd = -1) then
         begin
             cnctd := 1;
-            showMessage('Соединение с портом ' + com_port.port +
-              ' было восстановлено.');
+            showMessage('РЎРѕРµРґРёРЅРµРЅРёРµ СЃ РїРѕСЂС‚РѕРј ' + com_port.port +
+              ' Р±С‹Р»Рѕ РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРѕ.');
             com_open_btn.enabled := FALSE;
             chose_ports.enabled := FALSE;
             com_close_btn.enabled := TRUE;

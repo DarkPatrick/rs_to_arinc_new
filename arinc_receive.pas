@@ -284,9 +284,9 @@ begin
             arinc_addr.text := arinc_addr.text + ', ';
         end;
     end;
-    data_grid.cells[0, 0] := ' адрес';
-    data_grid.cells[1, 0] := ' признак';
-    data_grid.cells[2, 0] := ' данные';
+    data_grid.cells[0, 0] := ' Р°РґСЂРµСЃ';
+    data_grid.cells[1, 0] := ' РїСЂРёР·РЅР°Рє';
+    data_grid.cells[2, 0] := ' РґР°РЅРЅС‹Рµ';
     data_grid.Invalidate();
 
     send_calibr();
@@ -300,8 +300,8 @@ begin
       (key <> char(VK_LEFT)) and (key <> char(VK_RIGHT)) and
       (key <> char(VK_ESCAPE))) then
     begin
-        showMessage('адрес устройства должен содержать набор номеров или ' +
-          'интервалов в восьмеричной системе, перечисленных через запятую');
+        showMessage('Р°РґСЂРµСЃ СѓСЃС‚СЂРѕР№СЃС‚РІР° РґРѕР»Р¶РµРЅ СЃРѕРґРµСЂР¶Р°С‚СЊ РЅР°Р±РѕСЂ РЅРѕРјРµСЂРѕРІ РёР»Рё ' +
+          'РёРЅС‚РµСЂРІР°Р»РѕРІ РІ РІРѕСЃСЊРјРµСЂРёС‡РЅРѕР№ СЃРёСЃС‚РµРјРµ, РїРµСЂРµС‡РёСЃР»РµРЅРЅС‹С… С‡РµСЂРµР· Р·Р°РїСЏС‚СѓСЋ');
         abort;
     end
     else
@@ -319,7 +319,7 @@ begin
       (key <> char(VK_LEFT)) and (key <> char(VK_RIGHT)) and
       (key <> char(VK_ESCAPE))) then
     begin
-        showMessage('номер канала должен быть целым шестнадцатеричным числом');
+        showMessage('РЅРѕРјРµСЂ РєР°РЅР°Р»Р° РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ С†РµР»С‹Рј С€РµСЃС‚РЅР°РґС†Р°С‚РµСЂРёС‡РЅС‹Рј С‡РёСЃР»РѕРј');
         abort;
     end;
 end;
@@ -332,7 +332,7 @@ begin
       (key <> char(VK_LEFT)) and (key <> char(VK_RIGHT)) and
       (key <> char(VK_ESCAPE))) then
     begin
-        showMessage('количество посылок должно быть целым числом');
+        showMessage('РєРѕР»РёС‡РµСЃС‚РІРѕ РїРѕСЃС‹Р»РѕРє РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ С†РµР»С‹Рј С‡РёСЃР»РѕРј');
         abort;
     end;
 end;
@@ -350,9 +350,9 @@ begin
         time_passed[i] := 0;
         data_grid.cells[0, i] := ' ' + intToHex(global_addr[i], 2);
     end;
-    data_grid.cells[0, 0] := ' адрес';
-    data_grid.cells[1, 0] := ' признак';
-    data_grid.cells[2, 0] := ' данные';
+    data_grid.cells[0, 0] := ' Р°РґСЂРµСЃ';
+    data_grid.cells[1, 0] := ' РїСЂРёР·РЅР°Рє';
+    data_grid.cells[2, 0] := ' РґР°РЅРЅС‹Рµ';
     data_grid.Invalidate();
 end;
 
@@ -404,8 +404,8 @@ begin
           (key <> char(VK_LEFT)) and (key <> char(VK_RIGHT)) and
           (key <> char(VK_ESCAPE))) then
         begin
-            showMessage('значение поля ''адрес'' должно быть ' +
-              'восьмеричным числом');
+            showMessage('Р·РЅР°С‡РµРЅРёРµ РїРѕР»СЏ ''Р°РґСЂРµСЃ'' РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ ' +
+              'РІРѕСЃСЊРјРµСЂРёС‡РЅС‹Рј С‡РёСЃР»РѕРј');
             abort;
         end;
     end;
@@ -417,7 +417,7 @@ begin
           (key <> char(VK_RIGHT)) and (key <> char(VK_ESCAPE))) then
         begin
             showMessage
-              ('значение матрицы признака должно быть двоичным числом');
+              ('Р·РЅР°С‡РµРЅРёРµ РјР°С‚СЂРёС†С‹ РїСЂРёР·РЅР°РєР° РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ РґРІРѕРёС‡РЅС‹Рј С‡РёСЃР»РѕРј');
             abort;
         end;
     end;
@@ -430,8 +430,8 @@ begin
           (key <> char(VK_LEFT)) and (key <> char(VK_RIGHT)) and
           (key <> char(VK_ESCAPE))) then
         begin
-            showMessage('значение поля ''данные'' должно быть ' +
-              'шестнадцатеричным числом');
+            showMessage('Р·РЅР°С‡РµРЅРёРµ РїРѕР»СЏ ''РґР°РЅРЅС‹Рµ'' РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ ' +
+              'С€РµСЃС‚РЅР°РґС†Р°С‚РµСЂРёС‡РЅС‹Рј С‡РёСЃР»РѕРј');
             abort;
         end;
     end;
@@ -439,12 +439,12 @@ end;
 
 procedure Tarinc_rec.FormCreate(sender: TObject);
 begin
-    data_grid.cells[0, 0] := ' адрес';
-    data_grid.cells[1, 0] := ' признак';
-    data_grid.cells[2, 0] := ' данные';
-    data_s_grid.cells[0, 0] := 'адрес';
-    data_s_grid.cells[1, 0] := 'признак';
-    data_s_grid.cells[2, 0] := 'данные';
+    data_grid.cells[0, 0] := ' Р°РґСЂРµСЃ';
+    data_grid.cells[1, 0] := ' РїСЂРёР·РЅР°Рє';
+    data_grid.cells[2, 0] := ' РґР°РЅРЅС‹Рµ';
+    data_s_grid.cells[0, 0] := 'Р°РґСЂРµСЃ';
+    data_s_grid.cells[1, 0] := 'РїСЂРёР·РЅР°Рє';
+    data_s_grid.cells[2, 0] := 'РґР°РЅРЅС‹Рµ';
     global_addrs := 0;
     new_addr_str := '';
     global_chnl := 0;
@@ -460,7 +460,7 @@ begin
       (key <> char(VK_LEFT)) and (key <> char(VK_RIGHT)) and
       (key <> char(VK_ESCAPE))) then
     begin
-        showMessage('значение интервала должно быть целым числом');
+        showMessage('Р·РЅР°С‡РµРЅРёРµ РёРЅС‚РµСЂРІР°Р»Р° РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ С†РµР»С‹Рј С‡РёСЃР»РѕРј');
         abort;
     end;
 end;
