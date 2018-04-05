@@ -110,7 +110,7 @@ const
     START_BYTE = '55';
     START_BYTES: array [0 .. 3] of String = ('76', '70', 'D4', '8B');
     PACKAGE_LEN = 64;
-    VERSION = '1.0.0';
+    VERSION = '1.1.0';
 
 var
     form1: TForm1;
@@ -332,7 +332,8 @@ begin
         rcv_error := TRUE;
         exit(FALSE);
     end;
-    if (crcCheckSum(data_str, PACKAGE_LEN - 1) <> ord(data_str[PACKAGE_LEN])) then
+    if (crcCheckSum(data_str, PACKAGE_LEN - 1) <> ord(data_str[PACKAGE_LEN]))
+    then
     begin
         form1.received_data.cells[2, i] := 'ERROR: wrong CRC - ' +
           ord(data_str[PACKAGE_LEN]).toString() + ' (must be ' +
@@ -388,7 +389,7 @@ begin
             else
             begin
                 temp_grid := trm_dat_info;
-                //received_data_num := hex_to_int(str1[9] + str1[10]);
+                // received_data_num := hex_to_int(str1[9] + str1[10]);
                 trm_serv_cmd.Text := str1[9] + str1[10] + str1[11] + str1[12];
             end;
             with temp_grid do
@@ -513,7 +514,7 @@ begin
             chose_ports.enabled := FALSE;
             com_close_btn.enabled := TRUE;
             send_pack_btn.enabled := TRUE;
-            //speed_select.enabled := FALSE;
+            // speed_select.enabled := FALSE;
             send_arinc_set_btn.enabled := TRUE;
         end
         else
@@ -522,7 +523,7 @@ begin
             chose_ports.enabled := TRUE;
             com_close_btn.enabled := FALSE;
             send_pack_btn.enabled := FALSE;
-            //speed_select.enabled := TRUE;
+            // speed_select.enabled := TRUE;
             send_arinc_set_btn.enabled := FALSE;
         end;
     end;
@@ -623,7 +624,8 @@ var
 begin
     str1 := START_BYTES[3] + START_BYTES[2] + START_BYTES[1] + START_BYTES[0];
     form1.trm_serv_cmd.Text := intToHex((sended_data_num + 1) mod 256, 2) +
-      form1.rcv_serv_cmd.text[1] + form1.rcv_serv_cmd.text[2];//intToHex(received_data_num mod 256, 2);
+      form1.rcv_serv_cmd.Text[1] + form1.rcv_serv_cmd.Text[2];
+    // intToHex(received_data_num mod 256, 2);
     str1 := str1 + form1.trm_serv_cmd.Text;
     // два резервных байта
     str1 := str1 + '0000';
@@ -867,16 +869,17 @@ begin
             end;
             if (left_for_success > 0) then
             begin
-                if (ord(str1[i]) = hex_to_int(START_BYTES[left_for_success - 1])) then
+                if (ord(str1[i]) = hex_to_int(START_BYTES[left_for_success - 1]))
+                then
                 begin
                     dec(left_for_success);
                     received_string := received_string + str1[i];
-				    inc(received_chars_num);
+                    inc(received_chars_num);
                 end
                 else
                 begin
                     left_for_success := length(START_BYTES);
-				    received_chars_num := 0;
+                    received_chars_num := 0;
                     received_string := '';
                 end;
             end
@@ -916,7 +919,9 @@ begin
     try
         if FileExists('updater.exe') then
         begin
-            ShellExecute(0, 'open', 'updater.exe', PChar('DarkPatrick rs_to_arinc_new ' + VERSION + ' ' + ExtractFileName(GetModuleName(0))), nil, SW_SHOWNORMAL);
+            ShellExecute(0, 'open', 'updater.exe',
+              PChar('DarkPatrick rs_to_arinc_new ' + VERSION + ' ' +
+              ExtractFileName(GetModuleName(0))), nil, SW_SHOWNORMAL);
         end;
     finally
     end;
@@ -1070,7 +1075,7 @@ procedure TForm1.send_pack_btnClick(sender: TObject);
 var
     str1: string;
     i: integer;
-    crc_tmp: Byte;
+    crc_tmp: byte;
 begin
     with trm_dat_info do
     begin
@@ -1325,7 +1330,7 @@ var
     str1, str2, str3: string;
     h, m, s, ms: Word;
     str_num: StringNumber;
-    crc_tmp: Byte;
+    crc_tmp: byte;
 begin
     decodeTime(getTime(), h, m, s, ms);
     if ((arinc_receive.sending_proc) and (com_port.connected)) then
