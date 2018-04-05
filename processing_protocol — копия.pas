@@ -1,4 +1,4 @@
-﻿unit processing_protoсol;
+unit processing_protocol;
 
 interface
 
@@ -209,7 +209,6 @@ var
     i, j, k, l, str_pos, str_pos2, val: integer;
     str1, res: string;
 begin
-    showMessage('doesn''t work');
     j := 1;
     for i := 0 to grid.rowCount - 2 do
     begin

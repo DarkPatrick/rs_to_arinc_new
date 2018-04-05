@@ -41,7 +41,7 @@ begin
     end;
     for i := 1 to len do
     begin
-        crc_val := crc_table[crc_val] xor hex_to_int(data[i]);
+        crc_val := crc_table[crc_val] xor ord(data[i]);
     end;
 
     Result := crc_val;

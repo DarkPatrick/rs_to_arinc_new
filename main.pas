@@ -1,4 +1,4 @@
-unit main;
+﻿unit main;
 
 interface
 
@@ -327,6 +327,15 @@ begin
         form1.received_data.cells[2, i] := 'ERROR: wrong package length - ' +
           intToStr(length(data_str)) + ' (must be ' +
           intToStr(PACKAGE_LEN) + ')';
+        clear_data_cmd_pack(grid);
+        rcv_error := TRUE;
+        exit(FALSE);
+    end;
+    if (crcCheckSum(data_str, PACKAGE_LEN - 1) <> ord(data_str[PACKAGE_LEN])) then
+    begin
+        form1.received_data.cells[2, i] := 'ERROR: wrong CRC - ' +
+          ord(data_str[PACKAGE_LEN]).toString() + ' (must be ' +
+          crcCheckSum(data_str, PACKAGE_LEN - 1).toString() + ')';
         clear_data_cmd_pack(grid);
         rcv_error := TRUE;
         exit(FALSE);
@@ -840,33 +849,35 @@ begin
     begin
         for i := 1 to count do
         begin
-            if ((received_string <> '') or (left_for_success = 0)) then
+            if ((received_string <> '') and (left_for_success = 0)) then
             begin
                 received_string := received_string + str1[i];
                 received_chars_num := received_chars_num + 1;
                 if (received_chars_num = PACKAGE_LEN) then
                 begin
-                    if (crcCheckSum(received_string, PACKAGE_LEN - 1) <> hex_to_int(str1[i - 1] + str1[i])) then
-                    begin
-                        showMessage('CRC не совпало');
-                    end;
                     receiveStringCmd(received_string);
                     displayReceivedData(received_string);
                     gl_grid := rcv_dat_str;
                     received_chars_num := 0;
                     received_string := '';
+                    left_for_success := length(START_BYTES);
                 end;
             end;
-            if ((left_for_success > 0) and
-              (ord(str1[i]) = hex_to_int(START_BYTES[left_for_success - 1])))
-            then
+            if (left_for_success > 0) then
             begin
-                dec(left_for_success);
+                if (ord(str1[i]) = hex_to_int(START_BYTES[left_for_success - 1])) then
+                begin
+                    dec(left_for_success);
+                    received_string := received_string + str1[i];
+				    inc(received_chars_num);
+                end
+                else
+                begin
+                    left_for_success := length(START_BYTES);
+				    received_chars_num := 0;
+                    received_string := '';
+                end;
             end
-            else
-            begin
-                left_for_success := sizeof(START_BYTES);
-            end;
         end;
     end;
 end;
@@ -907,7 +918,7 @@ begin
     cnctd := 0;
     able_to_change_port := TRUE;
     no_programming := FALSE;
-    left_for_success := sizeof(START_BYTES);
+    left_for_success := length(START_BYTES);
 end;
 
 procedure TForm1.get_arinc_btnClick(sender: TObject);
@@ -1050,6 +1061,7 @@ procedure TForm1.send_pack_btnClick(sender: TObject);
 var
     str1: string;
     i: integer;
+    crc_tmp: Byte;
 begin
     with trm_dat_info do
     begin
@@ -1084,8 +1096,8 @@ begin
             str1 := str1 + cells[1, i];
         end;
     end;
-    str1 := str1 + intToHex(crcCheckSum(hex_to_chars(str1)), 2);
-    str1 := hex_to_chars(str1);
+    crc_tmp := crcCheckSum(hex_to_chars(str1));
+    str1 := hex_to_chars(str1) + chr(crc_tmp);
     sendCommand(str1);
     displaySendedData(str1);
 end;
@@ -1304,6 +1316,7 @@ var
     str1, str2, str3: string;
     h, m, s, ms: Word;
     str_num: StringNumber;
+    crc_tmp: Byte;
 begin
     decodeTime(getTime(), h, m, s, ms);
     if ((arinc_receive.sending_proc) and (com_port.connected)) then
@@ -1369,9 +1382,8 @@ begin
                     str1 := str1 + str2;
                     if ((i mod 11 = 0) and (i < data_s_grid.rowCount - 1)) then
                     begin
-                        str1 := str1 +
-                          intToHex(crcCheckSum(hex_to_chars(str1)), 2);
-                        str1 := hex_to_chars(str1);
+                        crc_tmp := crcCheckSum(hex_to_chars(str1));
+                        str1 := hex_to_chars(str1) + chr(crc_tmp);
                         sendCommand(str1);
                         displaySendedData(str1);
                         str1 := prepareFirstPackPart();
@@ -1394,8 +1406,8 @@ begin
                 begin
                     str1 := str1 + '0';
                 end;
-                str1 := str1 + intToHex(crcCheckSum(hex_to_chars(str1)), 2);
-                str1 := hex_to_chars(str1);
+                crc_tmp := crcCheckSum(hex_to_chars(str1));
+                str1 := hex_to_chars(str1) + chr(crc_tmp);
                 sendCommand(str1);
                 displaySendedData(str1);
                 str_num.free();
