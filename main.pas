@@ -9,7 +9,7 @@ uses
     StdCtrls,
     ExtCtrls, CPort, CPortCtl, Vcl.Grids, convertation, Vcl.MPlayer,
     System.Win.Registry, detect_ports, processing_protoсol, set_ports,
-    arinc_receive, dev_info, string_numbers, crc;
+    arinc_receive, dev_info, string_numbers, crc, ShellAPI;
 
 type
     TForm1 = class(TForm)
@@ -110,6 +110,7 @@ const
     START_BYTE = '55';
     START_BYTES: array [0 .. 3] of String = ('76', '70', 'D4', '8B');
     PACKAGE_LEN = 64;
+    VERSION = '1.0.0';
 
 var
     form1: TForm1;
@@ -912,6 +913,13 @@ end;
 
 procedure TForm1.formCreate(sender: TObject);
 begin
+    try
+        if FileExists('updater.exe') then
+        begin
+            ShellExecute(0, 'open', 'updater.exe', PChar('DarkPatrick rs_to_arinc_new ' + VERSION + ' ' + ExtractFileName(GetModuleName(0))), nil, SW_SHOWNORMAL);
+        end;
+    finally
+    end;
     visible := FALSE;
     checkForConnection();
     first_time := 1;
