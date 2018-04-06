@@ -4,12 +4,10 @@ interface
 
 uses
     set_mutex, Winapi.Windows, Winapi.Messages, System.SysUtils,
-    System.Variants,
-    System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
-    StdCtrls,
-    ExtCtrls, CPort, CPortCtl, Vcl.Grids, convertation, Vcl.MPlayer,
-    System.Win.Registry, detect_ports, processing_protoсol, set_ports,
-    arinc_receive, dev_info, string_numbers, crc, ShellAPI;
+    System.Variants, System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms,
+    Vcl.Dialogs, StdCtrls, ExtCtrls, CPort, CPortCtl, Vcl.Grids, convertation,
+    Vcl.MPlayer, System.Win.Registry, detect_ports, processing_protoсol,
+    set_ports, arinc_receive, dev_info, string_numbers, crc, ShellAPI, StrUtils;
 
 type
     TForm1 = class(TForm)
@@ -111,7 +109,7 @@ const
     START_BYTE = '55';
     START_BYTES: array [0 .. 3] of String = ('76', '70', 'D4', '8B');
     PACKAGE_LEN = 64;
-    VERSION = '1.1.0';
+    VERSION = '1.1.2';
 
 var
     form1: TForm1;
@@ -416,6 +414,7 @@ begin
                     begin
                         updateDevInfo(cells[1, i]);
                     end;
+                    cells[1, i] := chars_to_hex(ansiReverseString(hex_to_chars(cells[1, i])));
                     str_pos := str_pos + 8;
                 end;
             end;
@@ -917,6 +916,7 @@ end;
 
 procedure TForm1.formCreate(sender: TObject);
 begin
+    caption := caption + '(' + VERSION + ')';
     visible := FALSE;
     checkForConnection();
     first_time := 1;
@@ -1112,7 +1112,7 @@ begin
         end;
         for i := 1 to rowCount - 1 do
         begin
-            str1 := str1 + cells[1, i];
+            str1 := str1 + chars_to_hex(ansiReverseString(hex_to_chars(cells[1, i])));
         end;
     end;
     crc_tmp := crcCheckSum(hex_to_chars(str1));
@@ -1332,7 +1332,7 @@ end;
 procedure TForm1.Timer3Timer(sender: TObject);
 var
     i, j, ub: integer;
-    str1, str2, str3: string;
+    str1, str2, str3, str4: string;
     h, m, s, ms: Word;
     str_num: StringNumber;
     crc_tmp: byte;
@@ -1389,8 +1389,11 @@ begin
                         str3 := '0' + str3;
                     end;
                     str2 := '0' + str2 + str3[1];
-                    str1 := str1 + bin_to_hex(str2, 1);
-                    str1 := str1 + ansiUpperCase(str3[2] + str3[3] + str3[4] +
+                    //str1 := str1 + bin_to_hex(str2, 1);
+                    str4 := bin_to_hex(str2, 1);
+                    //str1 := str1 + ansiUpperCase(str3[2] + str3[3] + str3[4] +
+                      //str3[5] + str3[6]);
+                    str4 := str4 + ansiUpperCase(str3[2] + str3[3] + str3[4] +
                       str3[5] + str3[6]);
                     str_num.setNewVal(data_s_grid.cells[0, i]);
                     str2 := str_num.getInBase(16, 2);
@@ -1398,7 +1401,8 @@ begin
                     begin
                         str2 := '0' + str2;
                     end;
-                    str1 := str1 + str2;
+                    str4 := str4 + str2;
+                    str1 := str1 + chars_to_hex(ansiReverseString(hex_to_chars(str4)));
                     if ((i mod 11 = 0) and (i < data_s_grid.rowCount - 1)) then
                     begin
                         crc_tmp := crcCheckSum(hex_to_chars(str1));
