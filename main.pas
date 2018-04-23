@@ -109,7 +109,7 @@ const
     START_BYTE = '55';
     START_BYTES: array [0 .. 3] of String = ('76', '70', 'D4', '8B');
     PACKAGE_LEN = 64;
-    VERSION = '1.1.2';
+    VERSION = '1.1.8';
 
 var
     form1: TForm1;
@@ -359,11 +359,32 @@ begin
 end;
 
 procedure updateDevInfo(info_str: string);
+var
+    pins: string;
+    i: Integer;
 begin
     if (info_str[1] + info_str[2] = '01') then
     begin
-        dev_info.info_form.dev_num.Text := info_str[3] + info_str[4] +
+        dev_info.info_form.dev_num.text := info_str[3] + info_str[4] +
           info_str[5] + info_str[6] + info_str[7] + info_str[8];
+    end
+    else if (info_str[1] + info_str[2] = '02') then
+    begin
+        dev_info.info_form.board_num.text := info_str[3] + info_str[4] +
+          info_str[5] + info_str[6] + info_str[7] + info_str[8];
+    end
+    else if (info_str[1] + info_str[2] = '03') then
+    begin
+        pins := hex_to_bin(info_str[3] + info_str[4] +
+          info_str[5] + info_str[6] + info_str[7] + info_str[8]);
+        with (dev_info.info_form.pins_state) do
+        begin
+            text := '';
+            for i := 9 downto 0 do
+            begin
+                text := text + pins[length(pins) - i];
+            end;
+        end;
     end;
 end;
 
@@ -372,9 +393,9 @@ var
     i, j, str_pos: integer;
     str1: string;
     temp_grid: TStringGrid;
-    find_info_num: integer;
+    //find_info_num: integer;
 begin
-    find_info_num := 0;
+    //find_info_num := 0;
     if (checkCorrectness(data_str, grid)) then
     begin
         str1 := chars_to_hex(data_str);
@@ -397,10 +418,12 @@ begin
                 for i := 1 to 11 do
                 begin
                     cells[0, i] := str1[str_pos] + str1[str_pos + 1];
+                    {
                     if (cells[0, i] = '0F') then
                     begin
                         find_info_num := i;
                     end;
+                    }
                     str_pos := str_pos + 2;
                 end;
                 for i := 1 to 11 do
@@ -410,11 +433,12 @@ begin
                     begin
                         cells[1, i] := cells[1, i] + str1[str_pos + j];
                     end;
-                    if (find_info_num = i) then
+                    cells[1, i] := chars_to_hex(ansiReverseString(hex_to_chars(cells[1, i])));
+                    //if (find_info_num = i) then
+                    if (cells[0, i]  = '0F') then
                     begin
                         updateDevInfo(cells[1, i]);
                     end;
-                    cells[1, i] := chars_to_hex(ansiReverseString(hex_to_chars(cells[1, i])));
                     str_pos := str_pos + 8;
                 end;
             end;

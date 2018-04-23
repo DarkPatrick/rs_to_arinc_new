@@ -10,6 +10,8 @@ uses
 type
     Tinfo_form = class(TForm)
         dev_num: TLabeledEdit;
+    board_num: TLabeledEdit;
+    pins_state: TLabeledEdit;
         procedure FormCreate(Sender: TObject);
         procedure dev_numKeyPress(Sender: TObject; var Key: Char);
         procedure dev_numKeyDown(Sender: TObject; var Key: Word;

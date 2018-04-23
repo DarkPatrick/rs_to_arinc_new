@@ -17,14 +17,34 @@ object info_form: Tinfo_form
   object dev_num: TLabeledEdit
     Left = 16
     Top = 24
-    Width = 121
+    Width = 89
     Height = 21
-    EditLabel.Width = 92
+    EditLabel.Width = 57
     EditLabel.Height = 13
-    EditLabel.Caption = #1053#1086#1084#1077#1088' '#1091#1089#1090#1088#1086#1081#1089#1090#1074#1072
+    EditLabel.Caption = #1042#1077#1088#1089#1080#1103' '#1055#1054':'
     TabOrder = 0
     OnContextPopup = dev_numContextPopup
     OnKeyDown = dev_numKeyDown
     OnKeyPress = dev_numKeyPress
+  end
+  object board_num: TLabeledEdit
+    Left = 116
+    Top = 24
+    Width = 89
+    Height = 21
+    EditLabel.Width = 70
+    EditLabel.Height = 13
+    EditLabel.Caption = #1053#1086#1084#1077#1088' '#1087#1083#1072#1090#1099':'
+    TabOrder = 1
+  end
+  object pins_state: TLabeledEdit
+    Left = 16
+    Top = 80
+    Width = 121
+    Height = 21
+    EditLabel.Width = 98
+    EditLabel.Height = 13
+    EditLabel.Caption = #1057#1086#1089#1090#1086#1103#1085#1080#1077' '#1074#1093#1086#1076#1086#1074':'
+    TabOrder = 2
   end
 end
