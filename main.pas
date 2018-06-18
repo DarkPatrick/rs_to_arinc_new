@@ -111,7 +111,7 @@ const
     START_BYTE = '55';
     START_BYTES: array [0 .. 3] of String = ('76', '70', 'D4', '8B');
     PACKAGE_LEN = 64;
-    VERSION = '1.1.8';
+    VERSION = '1.1.9';
 
 var
     form1: TForm1;
