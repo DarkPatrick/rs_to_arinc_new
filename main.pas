@@ -111,7 +111,7 @@ const
     START_BYTE = '55';
     START_BYTES: array [0 .. 3] of String = ('76', '70', 'D4', '8B');
     PACKAGE_LEN = 64;
-    VERSION = '1.1.9';
+    VERSION = '1.1.10';
 
 var
     form1: TForm1;
@@ -416,7 +416,7 @@ begin
                 temp_grid := rcv_dat_info;
                 old_cnt := hex_to_int(rcv_serv_cmd.Text[1] + rcv_serv_cmd.Text[2]);
                 new_cnt := hex_to_int(str1[9] + str1[10]);
-                if (new_cnt - old_cnt > 1) then
+                if (Byte(new_cnt - old_cnt) > 1) then
                 begin
                     lost_packets := lost_packets + new_cnt - old_cnt - 1;
                 end;
@@ -922,6 +922,13 @@ begin
                     left_for_success := length(START_BYTES);
                     received_chars_num := 0;
                     received_string := '';
+                    if (ord(str1[i]) = hex_to_int(START_BYTES[left_for_success - 1]))
+                    then
+                    begin
+                        dec(left_for_success);
+                        received_string := received_string + str1[i];
+                        inc(received_chars_num);
+                    end;
                 end;
             end
         end;
