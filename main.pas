@@ -111,7 +111,7 @@ const
     START_BYTE = '55';
     START_BYTES: array [0 .. 3] of String = ('76', '70', 'D4', '8B');
     PACKAGE_LEN = 64;
-    VERSION = '1.1.10';
+    VERSION = '1.1.11';
 
 var
     form1: TForm1;
@@ -906,9 +906,10 @@ begin
                     received_chars_num := 0;
                     received_string := '';
                     left_for_success := length(START_BYTES);
+                    continue;
                 end;
-            end;
-            if (left_for_success > 0) then
+            end
+            else if (left_for_success > 0) then
             begin
                 if (ord(str1[i]) = hex_to_int(START_BYTES[left_for_success - 1]))
                 then
