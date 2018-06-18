@@ -40,6 +40,20 @@ object Form1: TForm1
       Font.Style = [fsBold, fsUnderline]
       ParentFont = False
     end
+    object lbl_crc_errors: TLabel
+      Left = 241
+      Top = 58
+      Width = 71
+      Height = 13
+      Caption = #1054#1096#1080#1073#1082#1080' CRC: '
+    end
+    object lbl_lost_packets: TLabel
+      Left = 241
+      Top = 77
+      Width = 101
+      Height = 13
+      Caption = #1055#1086#1090#1077#1088#1103#1085#1086' '#1087#1072#1082#1077#1090#1086#1074': '
+    end
     object received_data: TStringGrid
       Left = 10
       Top = 380

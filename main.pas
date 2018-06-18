@@ -52,6 +52,8 @@ type
         get_arinc_btn: TButton;
         Timer3: TTimer;
         info_btn: TButton;
+        lbl_crc_errors: TLabel;
+        lbl_lost_packets: TLabel;
         procedure formCreate(sender: TObject);
         procedure com_open_btnClick(sender: TObject);
         procedure com_portRxChar(sender: TObject; count: integer);
@@ -126,6 +128,7 @@ var
     last_ms: Word;
     tim3_cnt: integer;
     left_for_success: integer;
+    crc_errors, lost_packets: Integer;
 
 procedure clearHist(grid: integer);
 procedure checkReadingStatus();
@@ -159,6 +162,10 @@ begin
         temp_grid := form1.received_data;
         form1.rcv_dat_str.rowCount := 1;
         form1.rcv_dat_str.cells[0, 0] := '';
+        crc_errors := 0;
+        lost_packets := 0;
+        form1.lbl_crc_errors.caption := 'Ошибки CRC: ' + crc_errors.toString();
+        form1.lbl_lost_packets.caption := 'Потеряно пакетов: ' + lost_packets.toString();
     end
     else
     begin
@@ -339,6 +346,8 @@ begin
           crcCheckSum(data_str, PACKAGE_LEN - 1).toString() + ')';
         clear_data_cmd_pack(grid);
         rcv_error := TRUE;
+        inc(crc_errors);
+        form1.lbl_crc_errors.caption := 'Ошибки CRC: ' + crc_errors.ToString();
         exit(FALSE);
     end;
     str1 := chars_to_hex(data_str);
@@ -393,6 +402,7 @@ var
     i, j, str_pos: integer;
     str1: string;
     temp_grid: TStringGrid;
+    old_cnt, new_cnt: Byte;
     //find_info_num: integer;
 begin
     //find_info_num := 0;
@@ -404,6 +414,13 @@ begin
             if (grid = 0) then
             begin
                 temp_grid := rcv_dat_info;
+                old_cnt := hex_to_int(rcv_serv_cmd.Text[1] + rcv_serv_cmd.Text[2]);
+                new_cnt := hex_to_int(str1[9] + str1[10]);
+                if (new_cnt - old_cnt > 1) then
+                begin
+                    lost_packets := lost_packets + new_cnt - old_cnt - 1;
+                end;
+                lbl_lost_packets.caption := 'Потеряно пакетов: ' + lost_packets.toString();
                 rcv_serv_cmd.Text := str1[9] + str1[10] + str1[11] + str1[12];
             end
             else
@@ -949,6 +966,8 @@ begin
     able_to_change_port := TRUE;
     no_programming := FALSE;
     left_for_success := length(START_BYTES);
+    form1.lbl_crc_errors.caption := 'Ошибки CRC: ' + crc_errors.toString();
+    lbl_lost_packets.caption := 'Потеряно пакетов: ' + lost_packets.toString();
 end;
 
 procedure TForm1.FormShow(Sender: TObject);
