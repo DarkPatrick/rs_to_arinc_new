@@ -111,7 +111,7 @@ const
     START_BYTE = '55';
     START_BYTES: array [0 .. 3] of String = ('76', '70', 'D4', '8B');
     PACKAGE_LEN = 64;
-    VERSION = '1.1.13';
+    VERSION = '1.1.14';
 
 var
     form1: TForm1;
@@ -896,6 +896,7 @@ begin
         begin
             if ((received_string <> '') and (left_for_success = 0)) then
             begin
+                rcv_dat_lbl.caption := 'received byte #' + received_chars_num.toString() + ': ' + ord(str1[i]).toString() + '; ' + timeToStr(getTime());
                 received_string := received_string + str1[i];
                 received_chars_num := received_chars_num + 1;
                 if (received_chars_num = PACKAGE_LEN) then
