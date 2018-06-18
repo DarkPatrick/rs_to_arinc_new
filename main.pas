@@ -111,7 +111,7 @@ const
     START_BYTE = '55';
     START_BYTES: array [0 .. 3] of String = ('76', '70', 'D4', '8B');
     PACKAGE_LEN = 64;
-    VERSION = '1.1.12';
+    VERSION = '1.1.13';
 
 var
     form1: TForm1;
@@ -917,13 +917,14 @@ begin
                     dec(left_for_success);
                     received_string := received_string + str1[i];
                     inc(received_chars_num);
+                    rcv_dat_lbl.caption := 'all good: ' + ord(str1[i]).toString() + '; ' + timeToStr(getTime());
                 end
                 else
                 begin
                     left_for_success := length(START_BYTES);
                     received_chars_num := 0;
                     received_string := '';
-                    rcv_dat_lbl.caption := 'it''s fubar: ' + ord(str1[i]).toString();
+                    rcv_dat_lbl.caption := 'it''s fubar: ' + ord(str1[i]).toString() + '; ' + timeToStr(getTime());
                     if (ord(str1[i]) = hex_to_int(START_BYTES[left_for_success - 1]))
                     then
                     begin
