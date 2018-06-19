@@ -113,7 +113,7 @@ const
     START_BYTE = '55';
     START_BYTES: array [0 .. 3] of String = ('76', '70', 'D4', '8B');
     PACKAGE_LEN = 64;
-    VERSION = '1.1.15';
+    VERSION = '1.1.16';
 
 var
     form1: TForm1;
@@ -411,7 +411,8 @@ var
     //find_info_num: integer;
 begin
     //find_info_num := 0;
-    if (checkCorrectness(data_str, grid)) then
+    //if (checkCorrectness(data_str, grid)) then
+    checkCorrectness(data_str, grid);
     begin
         str1 := chars_to_hex(data_str);
         with form1 do
