@@ -101,6 +101,8 @@ type
         procedure trm_serv_cmdKeyDown(sender: TObject; var key: Word;
           Shift: TShiftState);
     procedure FormShow(Sender: TObject);
+    procedure com_portError(Sender: TObject; Errors: TComErrors);
+    procedure com_portRx80Full(Sender: TObject);
     private
         { Private declarations }
     public
@@ -111,7 +113,7 @@ const
     START_BYTE = '55';
     START_BYTES: array [0 .. 3] of String = ('76', '70', 'D4', '8B');
     PACKAGE_LEN = 64;
-    VERSION = '1.1.14';
+    VERSION = '1.1.15';
 
 var
     form1: TForm1;
@@ -129,6 +131,7 @@ var
     tim3_cnt: integer;
     left_for_success: integer;
     crc_errors, lost_packets: Integer;
+    synchronization: Integer;
 
 procedure clearHist(grid: integer);
 procedure checkReadingStatus();
@@ -348,6 +351,7 @@ begin
         rcv_error := TRUE;
         inc(crc_errors);
         form1.lbl_crc_errors.caption := 'Ошибки CRC: ' + crc_errors.ToString();
+        synchronization := 0;
         exit(FALSE);
     end;
     str1 := chars_to_hex(data_str);
@@ -362,6 +366,7 @@ begin
           START_BYTES[1] + START_BYTES[0] + ')';
         clear_data_cmd_pack(grid);
         rcv_error := TRUE;
+        synchronization := 0;
         exit(FALSE);
     end;
     result := TRUE;
@@ -876,6 +881,11 @@ begin
     prepare_file();
 end;
 
+procedure TForm1.com_portError(Sender: TObject; Errors: TComErrors);
+begin
+    showMessage('shit happened');
+end;
+
 procedure TForm1.com_portException(sender: TObject;
   TComException: TComExceptions; comportMessage: string; winError: Int64;
   winMessage: string);
@@ -884,12 +894,80 @@ begin
     abort();
 end;
 
+procedure TForm1.com_portRx80Full(Sender: TObject);
+begin
+    showMessage('error: buffer is almost full');
+end;
+
 procedure TForm1.com_portRxChar(sender: TObject; count: integer);
 var
     str1: string;
     i: integer;
 begin
-    com_port.readStr(str1, count);
+    if (not reading_paused) then
+    begin
+        if (synchronization = 0) then
+        begin
+            if (left_for_success > 0) then
+            begin
+                com_port.readStr(str1, 1);
+                if (ord(str1[1]) = hex_to_int(START_BYTES[left_for_success - 1]))
+                then
+                begin
+                    dec(left_for_success);
+                    received_string := received_string + str1[1];
+                    inc(received_chars_num);
+                    rcv_dat_lbl.caption := 'all good: ' + ord(str1[1]).toString() + '; ' + timeToStr(getTime());
+                end
+                else
+                begin
+                    left_for_success := length(START_BYTES);
+                    received_chars_num := 0;
+                    received_string := '';
+                    rcv_dat_lbl.caption := 'it''s fubar: ' + ord(str1[1]).toString() + '; ' + timeToStr(getTime());
+                    if (ord(str1[1]) = hex_to_int(START_BYTES[left_for_success - 1]))
+                    then
+                    begin
+                        dec(left_for_success);
+                        received_string := received_string + str1[1];
+                        inc(received_chars_num);
+                    end;
+                end;
+            end
+            else
+            begin
+                if (count >= PACKAGE_LEN - 4) then
+                begin
+                    synchronization := 1;
+                    com_port.readStr(str1, PACKAGE_LEN - 4);
+                    received_string := received_string + str1;
+                    receiveStringCmd(received_string);
+                    displayReceivedData(received_string);
+                    gl_grid := rcv_dat_str;
+                    received_chars_num := 0;
+                    received_string := '';
+                    left_for_success := length(START_BYTES);
+                end;
+            end;
+        end
+        else
+        begin
+            if (count >= PACKAGE_LEN) then
+            begin
+                com_port.readStr(str1, PACKAGE_LEN);
+                received_string := str1;
+                receiveStringCmd(received_string);
+                displayReceivedData(received_string);
+                gl_grid := rcv_dat_str;
+                received_chars_num := 0;
+                received_string := '';
+                left_for_success := length(START_BYTES);
+            end;
+        end;
+    end;
+    //com_port.readStr(str1, count);
+    //trm_dat_lbl.caption := count.toString();
+    {
     if ((not rcv_error) and (not reading_paused)) then
     begin
         for i := 1 to count do
@@ -937,6 +1015,7 @@ begin
             end
         end;
     end;
+    //}
 end;
 
 procedure TForm1.cont_reading_btnClick(sender: TObject);

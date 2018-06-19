@@ -510,6 +510,8 @@ object Form1: TForm1
     StoredProps = [spBasic]
     TriggersOnRxChar = True
     OnRxChar = com_portRxChar
+    OnError = com_portError
+    OnRx80Full = com_portRx80Full
     OnException = com_portException
     Left = 8
     Top = 48
