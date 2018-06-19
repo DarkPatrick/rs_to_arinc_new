@@ -113,7 +113,7 @@ const
     START_BYTE = '55';
     START_BYTES: array [0 .. 3] of String = ('76', '70', 'D4', '8B');
     PACKAGE_LEN = 64;
-    VERSION = '1.1.18';
+    VERSION = '1.1.19';
 
 var
     form1: TForm1;
@@ -950,11 +950,23 @@ begin
                     received_string := '';
                     left_for_success := length(START_BYTES);
                 end;
+                while (count >= PACKAGE_LEN) do
+                begin
+                    com_port.readStr(str1, PACKAGE_LEN);
+                    received_string := str1;
+                    receiveStringCmd(received_string);
+                    displayReceivedData(received_string);
+                    gl_grid := rcv_dat_str;
+                    received_chars_num := 0;
+                    received_string := '';
+                    left_for_success := length(START_BYTES);
+                    count := count - PACKAGE_LEN;
+                end;
             end;
         end
         else
         begin
-            if (count >= PACKAGE_LEN) then
+            while (count >= PACKAGE_LEN) do
             begin
                 com_port.readStr(str1, PACKAGE_LEN);
                 received_string := str1;
@@ -964,8 +976,13 @@ begin
                 received_chars_num := 0;
                 received_string := '';
                 left_for_success := length(START_BYTES);
+                count := count - PACKAGE_LEN;
             end;
         end;
+    end
+    else
+    begin
+        com_port.readStr(str1, count);
     end;
     //}
     //com_port.readStr(str1, count);
