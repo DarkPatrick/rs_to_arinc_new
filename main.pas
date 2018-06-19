@@ -113,7 +113,7 @@ const
     START_BYTE = '55';
     START_BYTES: array [0 .. 3] of String = ('76', '70', 'D4', '8B');
     PACKAGE_LEN = 64;
-    VERSION = '1.1.17';
+    VERSION = '1.1.18';
 
 var
     form1: TForm1;
@@ -905,7 +905,7 @@ var
     str1: string;
     i: integer;
 begin
-    {
+    //{
     if (not reading_paused) then
     begin
         if (synchronization = 0) then
@@ -967,10 +967,10 @@ begin
             end;
         end;
     end;
-    }
-    com_port.readStr(str1, count);
+    //}
+    //com_port.readStr(str1, count);
     //trm_dat_lbl.caption := count.toString();
-    //{
+    {
     //if ((not rcv_error) and (not reading_paused)) then
     if (not reading_paused) then
     begin
