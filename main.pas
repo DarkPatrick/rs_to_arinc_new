@@ -113,7 +113,7 @@ const
     START_BYTE = '55';
     START_BYTES: array [0 .. 3] of String = ('76', '70', 'D4', '8B');
     PACKAGE_LEN = 64;
-    VERSION = '1.1.16';
+    VERSION = '1.1.17';
 
 var
     form1: TForm1;
@@ -884,7 +884,7 @@ end;
 
 procedure TForm1.com_portError(Sender: TObject; Errors: TComErrors);
 begin
-    showMessage('shit happened');
+    //showMessage('shit happened');
 end;
 
 procedure TForm1.com_portException(sender: TObject;
@@ -905,6 +905,7 @@ var
     str1: string;
     i: integer;
 begin
+    {
     if (not reading_paused) then
     begin
         if (synchronization = 0) then
@@ -966,10 +967,12 @@ begin
             end;
         end;
     end;
-    //com_port.readStr(str1, count);
+    }
+    com_port.readStr(str1, count);
     //trm_dat_lbl.caption := count.toString();
-    {
-    if ((not rcv_error) and (not reading_paused)) then
+    //{
+    //if ((not rcv_error) and (not reading_paused)) then
+    if (not reading_paused) then
     begin
         for i := 1 to count do
         begin
@@ -997,14 +1000,14 @@ begin
                     dec(left_for_success);
                     received_string := received_string + str1[i];
                     inc(received_chars_num);
-                    rcv_dat_lbl.caption := 'all good: ' + ord(str1[i]).toString() + '; ' + timeToStr(getTime());
+                    //rcv_dat_lbl.caption := 'all good: ' + ord(str1[i]).toString() + '; ' + timeToStr(getTime());
                 end
                 else
                 begin
                     left_for_success := length(START_BYTES);
                     received_chars_num := 0;
                     received_string := '';
-                    rcv_dat_lbl.caption := 'it''s fubar: ' + ord(str1[i]).toString() + '; ' + timeToStr(getTime());
+                    //rcv_dat_lbl.caption := 'it''s fubar: ' + ord(str1[i]).toString() + '; ' + timeToStr(getTime());
                     if (ord(str1[i]) = hex_to_int(START_BYTES[left_for_success - 1]))
                     then
                     begin
