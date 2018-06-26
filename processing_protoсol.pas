@@ -48,6 +48,7 @@ implementation
 
 const
     NUM_BEFORE_FLUSH = 200;
+    // START_BYTES: array [0 .. 3] of String = ('76', '70', 'D4', '8B');
 
 var
     data_file: file of TPackage;
@@ -215,11 +216,13 @@ begin
     begin
         str1 := grid.cells[0, i];
         str1 := hex_to_bin(chars_to_hex(str1));
+        // 8*3+1 третий байт в двоичной системе.
+        // теперь надо с восьмого
         str_pos := 25;
-        str_pos2 := 121;
+        str_pos2 := 153;
         with form2.arinc_protocol do
         begin
-            for k := 1 to 12 do
+            for k := 1 to 11 do
             begin
                 res := '';
                 for l := str_pos to str_pos + 7 do
@@ -227,6 +230,8 @@ begin
                     res := res + str1[l];
                 end;
                 val := bin_to_int(res);
+                // TODO: порядок следования байт в параметрах изменился в новом
+                // протоколе. Исправить.
                 if ((val > 0) and (val < 13)) then
                 begin
                     cells[0, j] := bin_to_hex(res);

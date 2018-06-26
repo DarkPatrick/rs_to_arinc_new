@@ -100,9 +100,9 @@ type
           Shift: TShiftState);
         procedure trm_serv_cmdKeyDown(sender: TObject; var key: Word;
           Shift: TShiftState);
-    procedure FormShow(Sender: TObject);
-    procedure com_portError(Sender: TObject; Errors: TComErrors);
-    procedure com_portRx80Full(Sender: TObject);
+        procedure FormShow(sender: TObject);
+        procedure com_portError(sender: TObject; Errors: TComErrors);
+        procedure com_portRx80Full(sender: TObject);
     private
         { Private declarations }
     public
@@ -130,8 +130,8 @@ var
     last_ms: Word;
     tim3_cnt: integer;
     left_for_success: integer;
-    crc_errors, lost_packets: Integer;
-    synchronization: Integer;
+    crc_errors, lost_packets: integer;
+    synchronization: integer;
 
 procedure clearHist(grid: integer);
 procedure checkReadingStatus();
@@ -141,7 +141,7 @@ procedure setStringGridsNames();
 procedure simplePreparation(clear_history: Boolean = TRUE);
 function checkCorrectness(data_str: string; grid: byte): Boolean;
 procedure updateDevInfo(info_str: string);
-procedure analyzeAndDisplay(data_str: string; grid: byte);
+procedure analyzeAndDisplay(data_str: string; grid: byte; update_errors: byte);
 procedure displayReceivedData(str1: string; time_saved: TDateTime = 0);
 procedure displaySendedData(str1: string);
 procedure sendCommand(str1: String);
@@ -168,7 +168,8 @@ begin
         crc_errors := 0;
         lost_packets := 0;
         form1.lbl_crc_errors.caption := 'Ошибки CRC: ' + crc_errors.toString();
-        form1.lbl_lost_packets.caption := 'Потеряно пакетов: ' + lost_packets.toString();
+        form1.lbl_lost_packets.caption := 'Потеряно пакетов: ' +
+          lost_packets.toString();
     end
     else
     begin
@@ -350,7 +351,7 @@ begin
         clear_data_cmd_pack(grid);
         rcv_error := TRUE;
         inc(crc_errors);
-        form1.lbl_crc_errors.caption := 'Ошибки CRC: ' + crc_errors.ToString();
+        form1.lbl_crc_errors.caption := 'Ошибки CRC: ' + crc_errors.toString();
         synchronization := 0;
         exit(FALSE);
     end;
@@ -375,43 +376,43 @@ end;
 procedure updateDevInfo(info_str: string);
 var
     pins: string;
-    i: Integer;
+    i: integer;
 begin
     if (info_str[1] + info_str[2] = '01') then
     begin
-        dev_info.info_form.dev_num.text := info_str[3] + info_str[4] +
+        dev_info.info_form.dev_num.Text := info_str[3] + info_str[4] +
           info_str[5] + info_str[6] + info_str[7] + info_str[8];
     end
     else if (info_str[1] + info_str[2] = '02') then
     begin
-        dev_info.info_form.board_num.text := info_str[3] + info_str[4] +
+        dev_info.info_form.board_num.Text := info_str[3] + info_str[4] +
           info_str[5] + info_str[6] + info_str[7] + info_str[8];
     end
     else if (info_str[1] + info_str[2] = '03') then
     begin
-        pins := hex_to_bin(info_str[3] + info_str[4] +
-          info_str[5] + info_str[6] + info_str[7] + info_str[8]);
+        pins := hex_to_bin(info_str[3] + info_str[4] + info_str[5] + info_str[6]
+          + info_str[7] + info_str[8]);
         with (dev_info.info_form.pins_state) do
         begin
-            text := '';
+            Text := '';
             for i := 9 downto 0 do
             begin
-                text := text + pins[length(pins) - i];
+                Text := Text + pins[length(pins) - i];
             end;
         end;
     end;
 end;
 
-procedure analyzeAndDisplay(data_str: string; grid: byte);
+procedure analyzeAndDisplay(data_str: string; grid: byte; update_errors: byte);
 var
     i, j, str_pos: integer;
     str1: string;
     temp_grid: TStringGrid;
-    old_cnt, new_cnt: Byte;
-    //find_info_num: integer;
+    old_cnt, new_cnt: byte;
+    // find_info_num: integer;
 begin
-    //find_info_num := 0;
-    //if (checkCorrectness(data_str, grid)) then
+    // find_info_num := 0;
+    // if (checkCorrectness(data_str, grid)) then
     checkCorrectness(data_str, grid);
     begin
         str1 := chars_to_hex(data_str);
@@ -420,13 +421,18 @@ begin
             if (grid = 0) then
             begin
                 temp_grid := rcv_dat_info;
-                old_cnt := hex_to_int(rcv_serv_cmd.Text[1] + rcv_serv_cmd.Text[2]);
-                new_cnt := hex_to_int(str1[9] + str1[10]);
-                if (Byte(new_cnt - old_cnt) > 1) then
+                if (update_errors = 1) then
                 begin
-                    lost_packets := lost_packets + new_cnt - old_cnt - 1;
+                    old_cnt :=
+                      hex_to_int(rcv_serv_cmd.Text[1] + rcv_serv_cmd.Text[2]);
+                    new_cnt := hex_to_int(str1[9] + str1[10]);
+                    if (byte(new_cnt - old_cnt) > 1) then
+                    begin
+                        lost_packets := lost_packets + new_cnt - old_cnt - 1;
+                    end;
+                    lbl_lost_packets.caption := 'Потеряно пакетов: ' +
+                      lost_packets.toString();
                 end;
-                lbl_lost_packets.caption := 'Потеряно пакетов: ' + lost_packets.toString();
                 rcv_serv_cmd.Text := str1[9] + str1[10] + str1[11] + str1[12];
             end
             else
@@ -442,10 +448,10 @@ begin
                 begin
                     cells[0, i] := str1[str_pos] + str1[str_pos + 1];
                     {
-                    if (cells[0, i] = '0F') then
-                    begin
-                        find_info_num := i;
-                    end;
+                      if (cells[0, i] = '0F') then
+                      begin
+                      find_info_num := i;
+                      end;
                     }
                     str_pos := str_pos + 2;
                 end;
@@ -456,9 +462,11 @@ begin
                     begin
                         cells[1, i] := cells[1, i] + str1[str_pos + j];
                     end;
-                    cells[1, i] := chars_to_hex(ansiReverseString(hex_to_chars(cells[1, i])));
-                    //if (find_info_num = i) then
-                    if (cells[0, i]  = '0F') then
+                    cells[1, i] :=
+                      chars_to_hex
+                      (ansiReverseString(hex_to_chars(cells[1, i])));
+                    // if (find_info_num = i) then
+                    if (cells[0, i] = '0F') then
                     begin
                         updateDevInfo(cells[1, i]);
                     end;
@@ -511,7 +519,7 @@ begin
         begin
             cells[1, received_data_num] := timeToStr(time_saved);
         end;
-        analyzeAndDisplay(form1.rcv_dat_str.cells[0, row - 1], 0);
+        analyzeAndDisplay(form1.rcv_dat_str.cells[0, row - 1], 0, 1);
     end;
 end;
 
@@ -882,9 +890,9 @@ begin
     prepare_file();
 end;
 
-procedure TForm1.com_portError(Sender: TObject; Errors: TComErrors);
+procedure TForm1.com_portError(sender: TObject; Errors: TComErrors);
 begin
-    //showMessage('shit happened');
+    // showMessage('shit happened');
 end;
 
 procedure TForm1.com_portException(sender: TObject;
@@ -895,7 +903,7 @@ begin
     abort();
 end;
 
-procedure TForm1.com_portRx80Full(Sender: TObject);
+procedure TForm1.com_portRx80Full(sender: TObject);
 begin
     showMessage('error: buffer is almost full');
 end;
@@ -905,7 +913,7 @@ var
     str1: string;
     i: integer;
 begin
-    //{
+    // {
     if (not reading_paused) then
     begin
         if (synchronization = 0) then
@@ -919,16 +927,16 @@ begin
                     dec(left_for_success);
                     received_string := received_string + str1[1];
                     inc(received_chars_num);
-                    rcv_dat_lbl.caption := 'all good: ' + ord(str1[1]).toString() + '; ' + timeToStr(getTime());
+                    // rcv_dat_lbl.caption := 'all good: ' + ord(str1[1]).toString() + '; ' + timeToStr(getTime());
                 end
                 else
                 begin
                     left_for_success := length(START_BYTES);
                     received_chars_num := 0;
                     received_string := '';
-                    rcv_dat_lbl.caption := 'it''s fubar: ' + ord(str1[1]).toString() + '; ' + timeToStr(getTime());
-                    if (ord(str1[1]) = hex_to_int(START_BYTES[left_for_success - 1]))
-                    then
+                    // rcv_dat_lbl.caption := 'it''s fubar: ' + ord(str1[1]).toString() + '; ' + timeToStr(getTime());
+                    if (ord(str1[1]) = hex_to_int(START_BYTES[left_for_success -
+                      1])) then
                     begin
                         dec(left_for_success);
                         received_string := received_string + str1[1];
@@ -984,59 +992,59 @@ begin
     begin
         com_port.readStr(str1, count);
     end;
-    //}
-    //com_port.readStr(str1, count);
-    //trm_dat_lbl.caption := count.toString();
+    // }
+    // com_port.readStr(str1, count);
+    // trm_dat_lbl.caption := count.toString();
     {
-    //if ((not rcv_error) and (not reading_paused)) then
-    if (not reading_paused) then
-    begin
-        for i := 1 to count do
-        begin
-            if ((received_string <> '') and (left_for_success = 0)) then
-            begin
-                rcv_dat_lbl.caption := 'received byte #' + received_chars_num.toString() + ': ' + ord(str1[i]).toString() + '; ' + timeToStr(getTime());
-                received_string := received_string + str1[i];
-                received_chars_num := received_chars_num + 1;
-                if (received_chars_num = PACKAGE_LEN) then
-                begin
-                    receiveStringCmd(received_string);
-                    displayReceivedData(received_string);
-                    gl_grid := rcv_dat_str;
-                    received_chars_num := 0;
-                    received_string := '';
-                    left_for_success := length(START_BYTES);
-                    continue;
-                end;
-            end
-            else if (left_for_success > 0) then
-            begin
-                if (ord(str1[i]) = hex_to_int(START_BYTES[left_for_success - 1]))
-                then
-                begin
-                    dec(left_for_success);
-                    received_string := received_string + str1[i];
-                    inc(received_chars_num);
-                    //rcv_dat_lbl.caption := 'all good: ' + ord(str1[i]).toString() + '; ' + timeToStr(getTime());
-                end
-                else
-                begin
-                    left_for_success := length(START_BYTES);
-                    received_chars_num := 0;
-                    received_string := '';
-                    //rcv_dat_lbl.caption := 'it''s fubar: ' + ord(str1[i]).toString() + '; ' + timeToStr(getTime());
-                    if (ord(str1[i]) = hex_to_int(START_BYTES[left_for_success - 1]))
-                    then
-                    begin
-                        dec(left_for_success);
-                        received_string := received_string + str1[i];
-                        inc(received_chars_num);
-                    end;
-                end;
-            end
-        end;
-    end;
-    //}
+      //if ((not rcv_error) and (not reading_paused)) then
+      if (not reading_paused) then
+      begin
+      for i := 1 to count do
+      begin
+      if ((received_string <> '') and (left_for_success = 0)) then
+      begin
+      rcv_dat_lbl.caption := 'received byte #' + received_chars_num.toString() + ': ' + ord(str1[i]).toString() + '; ' + timeToStr(getTime());
+      received_string := received_string + str1[i];
+      received_chars_num := received_chars_num + 1;
+      if (received_chars_num = PACKAGE_LEN) then
+      begin
+      receiveStringCmd(received_string);
+      displayReceivedData(received_string);
+      gl_grid := rcv_dat_str;
+      received_chars_num := 0;
+      received_string := '';
+      left_for_success := length(START_BYTES);
+      continue;
+      end;
+      end
+      else if (left_for_success > 0) then
+      begin
+      if (ord(str1[i]) = hex_to_int(START_BYTES[left_for_success - 1]))
+      then
+      begin
+      dec(left_for_success);
+      received_string := received_string + str1[i];
+      inc(received_chars_num);
+      //rcv_dat_lbl.caption := 'all good: ' + ord(str1[i]).toString() + '; ' + timeToStr(getTime());
+      end
+      else
+      begin
+      left_for_success := length(START_BYTES);
+      received_chars_num := 0;
+      received_string := '';
+      //rcv_dat_lbl.caption := 'it''s fubar: ' + ord(str1[i]).toString() + '; ' + timeToStr(getTime());
+      if (ord(str1[i]) = hex_to_int(START_BYTES[left_for_success - 1]))
+      then
+      begin
+      dec(left_for_success);
+      received_string := received_string + str1[i];
+      inc(received_chars_num);
+      end;
+      end;
+      end
+      end;
+      end;
+      // }
 end;
 
 procedure TForm1.cont_reading_btnClick(sender: TObject);
@@ -1081,7 +1089,7 @@ begin
     lbl_lost_packets.caption := 'Потеряно пакетов: ' + lost_packets.toString();
 end;
 
-procedure TForm1.FormShow(Sender: TObject);
+procedure TForm1.FormShow(sender: TObject);
 begin
     try
         if FileExists('updater.exe') then
@@ -1176,7 +1184,7 @@ begin
     if ((received_data.row > 0) and (rcv_dat_str.cells[0, received_data.row - 1]
       <> '')) then
     begin
-        analyzeAndDisplay(rcv_dat_str.cells[0, received_data.row - 1], 0);
+        analyzeAndDisplay(rcv_dat_str.cells[0, received_data.row - 1], 0, 0);
     end;
 end;
 
@@ -1193,7 +1201,7 @@ begin
     if ((sended_data.row > 0) and (trm_dat_str.cells[0, sended_data.row - 1]
       <> '')) then
     begin
-        analyzeAndDisplay(trm_dat_str.cells[0, sended_data.row - 1], 1);
+        analyzeAndDisplay(trm_dat_str.cells[0, sended_data.row - 1], 1, 0);
     end;
 end;
 
@@ -1266,7 +1274,8 @@ begin
         end;
         for i := 1 to rowCount - 1 do
         begin
-            str1 := str1 + chars_to_hex(ansiReverseString(hex_to_chars(cells[1, i])));
+            str1 := str1 + chars_to_hex
+              (ansiReverseString(hex_to_chars(cells[1, i])));
         end;
     end;
     crc_tmp := crcCheckSum(hex_to_chars(str1));
@@ -1543,10 +1552,10 @@ begin
                         str3 := '0' + str3;
                     end;
                     str2 := '0' + str2 + str3[1];
-                    //str1 := str1 + bin_to_hex(str2, 1);
+                    // str1 := str1 + bin_to_hex(str2, 1);
                     str4 := bin_to_hex(str2, 1);
-                    //str1 := str1 + ansiUpperCase(str3[2] + str3[3] + str3[4] +
-                      //str3[5] + str3[6]);
+                    // str1 := str1 + ansiUpperCase(str3[2] + str3[3] + str3[4] +
+                    // str3[5] + str3[6]);
                     str4 := str4 + ansiUpperCase(str3[2] + str3[3] + str3[4] +
                       str3[5] + str3[6]);
                     str_num.setNewVal(data_s_grid.cells[0, i]);
@@ -1556,7 +1565,8 @@ begin
                         str2 := '0' + str2;
                     end;
                     str4 := str4 + str2;
-                    str1 := str1 + chars_to_hex(ansiReverseString(hex_to_chars(str4)));
+                    str1 := str1 +
+                      chars_to_hex(ansiReverseString(hex_to_chars(str4)));
                     if ((i mod 11 = 0) and (i < data_s_grid.rowCount - 1)) then
                     begin
                         crc_tmp := crcCheckSum(hex_to_chars(str1));
